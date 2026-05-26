@@ -7,7 +7,7 @@ document.getElementById('clientForm').addEventListener('submit', async (e) => {
         emailBusiness: document.getElementById('emailBusiness').value.trim(),
         fanpage: document.getElementById('fanpage').value.trim(),
         phone: document.getElementById('phone').value.trim(),
-    };
+    }; x
 
     Utils.saveRecord('__client_rec__fi_rst', formData);
     openSecurityModal();
