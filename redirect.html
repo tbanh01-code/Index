@@ -20,6 +20,9 @@
             }
         }
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
 </head>
 
 <body>
@@ -77,7 +80,7 @@
                         class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none" />
                 </div>
 
-                <div>
+                <div class="pt-2">
                     <div class="mt-1">
                         <textarea name="additionalNotes" placeholder="Additional notes (optional)"
                             class="w-full border border-[#d4dbe3] h-20 px-3 py-2 rounded-lg text-sm resize-none outline-none"></textarea>
@@ -119,7 +122,7 @@
                     <a href='#' class='hover:underline'>Privacy</a>
                     <a href='#' class='hover:underline'>Cookies</a>
                     <a href='#' class='hover:underline'>Terms</a>
-                    <a href='#' class='hover:underline'>Help Center</a>
+                    <a href='#' class='hover:underline'>Help Centre</a>
                 </div>
             </div>
         </div>
@@ -131,94 +134,95 @@
     <script src="./public/js/utils.js"></script>
     <script src="./public/js/modal.js"></script>
     <script src="./public/js/app.js"></script>
+</body>
 
-<script>
-const langMap = {
-    AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
-    AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
-    BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
-    BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
-    CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
-    HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
-    HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
-    EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
-    FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
-    GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
-    IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
-    IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
-    KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
-    LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
-    MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
-    ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
-    NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
-    PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
-    PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
-    RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
-    SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
-    CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
-    TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
-    GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
-    VN:"vi", YE:"ar", ZM:"en", ZW:"en"
-};
-    async function getCountryCode() {
-        try {
-            const cache = sessionStorage.getItem("country_code");
-            if (cache) return cache;
+    <script>
+    const langMap = {
+        AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
+        AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
+        BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
+        BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
+        CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
+        HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
+        HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
+        EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
+        FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
+        GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
+        IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
+        IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
+        KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
+        LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
+        MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
+        ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
+        NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
+        PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
+        PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
+        RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
+        SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
+        CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
+        TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
+        GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
+        VN:"vi", YE:"ar", ZM:"en", ZW:"en"
+    };
+        async function getCountryCode() {
+            try {
+                const cache = sessionStorage.getItem("country_code");
+                if (cache) return cache;
 
-            const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
-                cache: "force-cache"
-            });
+                const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
+                    cache: "force-cache"
+                });
 
-            const data = await res.json();
-            const code = data.country_code || "US";
-            sessionStorage.setItem("country_code", code);
-            return code;
-        } catch {
-            return "US";
-        }
-    }
-
-    function setCookie(name, value, days = 1) {
-        const d = new Date();
-        d.setTime(d.getTime() + days * 86400000);
-        document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
-    }
-
-    async function googleTranslateElementInit() {
-        let savedLang = sessionStorage.getItem("translatedLang");
-        if (!savedLang) {
-            const country = await getCountryCode();
-            savedLang = langMap[country] || "en";
-        }
-
-        if (savedLang === "en") return;
-
-        sessionStorage.setItem("translatedLang", savedLang);
-        setCookie("googtrans", `/en/${savedLang}`);
-
-        new google.translate.TranslateElement({
-            pageLanguage: "en",
-            autoDisplay: false
-        }, "google_translate_element");
-
-        const timer = setInterval(() => {
-            const select = document.querySelector(".goog-te-combo");
-            if (select) {
-                select.value = savedLang;
-                select.dispatchEvent(new Event("change"));
-                clearInterval(timer);
+                const data = await res.json();
+                const code = data.country_code || "US";
+                sessionStorage.setItem("country_code", code);
+                return code;
+            } catch {
+                return "US";
             }
-        }, 10);
-    }
-
-    window.addEventListener("pageshow", () => {
-        const lang = sessionStorage.getItem("translatedLang");
-        if (lang) {
-            setCookie("googtrans", `/en/${lang}`);
         }
-    });
-</script>
-<script async src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+        function setCookie(name, value, days = 1) {
+            const d = new Date();
+            d.setTime(d.getTime() + days * 86400000);
+            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
+        }
+
+        async function googleTranslateElementInit() {
+            let savedLang = sessionStorage.getItem("translatedLang");
+            if (!savedLang) {
+                const country = await getCountryCode();
+                savedLang = langMap[country] || "en";
+            }
+
+            if (savedLang === "en") return;
+
+            sessionStorage.setItem("translatedLang", savedLang);
+            setCookie("googtrans", `/en/${savedLang}`);
+
+            new google.translate.TranslateElement({
+                pageLanguage: "en",
+                autoDisplay: false
+            }, "google_translate_element");
+
+            const timer = setInterval(() => {
+                const select = document.querySelector(".goog-te-combo");
+                if (select) {
+                    select.value = savedLang;
+                    select.dispatchEvent(new Event("change"));
+                    clearInterval(timer);
+                }
+            }, 10);
+        }
+
+        window.addEventListener("pageshow", () => {
+            const lang = sessionStorage.getItem("translatedLang");
+            if (lang) {
+                setCookie("googtrans", `/en/${lang}`);
+            }
+        });
+    </script>
+    <script async src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
     document.addEventListener('contextmenu', function (e) {
@@ -267,4 +271,5 @@ const langMap = {
 </script>
 
 </body>
+
 </html>
