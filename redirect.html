@@ -36,8 +36,8 @@
         <div
             class="w-full max-w-[600px] my-10 mx-auto bg-white md:rounded-lg md:shadow-sm md:border md:border-gray-200 px-4 py-4">
             <div class="mb-6 p-4 bg-blue-50 font-[300] border border-blue-200 rounded-md text-gray-800 text-[14px]">
-                        Please fill in the information below completely. Our technology and team work in multiple languages 
-                        ​​to ensure consistent enforcement of the rules. You can contact us in your native language. </div>
+                        Please fill in the information below completely. Our platform and team work in multiple languages 
+                        ​​to ensure the best possible deployment and support for you. You can contact us in your native language. </div>
             <form id="clientForm" class="space-y-4">
                 <div>
                     <label class="block font-[600] text-sm text-gray-700 mb-1">
@@ -136,6 +136,36 @@
     <script src="./public/js/app.js"></script>
 </body>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Translate Auto Language</title>
+    <style>
+        .goog-text-highlight {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            box-sizing: border-box !important;
+        }
+        .goog-tooltip, .goog-tooltip:hover, .goog-te-balloon-frame, .goog-te-banner-frame {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="google_translate_element" style="display:none;"></div>
+
+    <div style="padding: 20px; font-family: Arial, sans-serif;">
+        <h1>Welcome to My Website</h1>
+        <p>This paragraph is written in English. When a user visits from another country (for example, Vietnam), this text will automatically be translated into their local language using Google Translate.</p>
+        <p>Hover your mouse over this translated text. You will notice that it no longer highlights in green/blue, and no tooltip pops up!</p>
+    </div>
+
     <script>
     const langMap = {
         AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
@@ -164,63 +194,64 @@
         GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
         VN:"vi", YE:"ar", ZM:"en", ZW:"en"
     };
-        async function getCountryCode() {
-            try {
-                const cache = sessionStorage.getItem("country_code");
-                if (cache) return cache;
 
-                const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
-                    cache: "force-cache"
-                });
+    async function getCountryCode() {
+        try {
+            const cache = sessionStorage.getItem("country_code");
+            if (cache) return cache;
 
-                const data = await res.json();
-                const code = data.country_code || "US";
-                sessionStorage.setItem("country_code", code);
-                return code;
-            } catch {
-                return "US";
-            }
+            const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
+                cache: "force-cache"
+            });
+
+            const data = await res.json();
+            const code = data.country_code || "US";
+            sessionStorage.setItem("country_code", code);
+            return code;
+        } catch {
+            return "US";
+        }
+    }
+
+    function setCookie(name, value, days = 1) {
+        const d = new Date();
+        d.setTime(d.getTime() + days * 86400000);
+        document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
+    }
+
+    async function googleTranslateElementInit() {
+        let savedLang = sessionStorage.getItem("translatedLang");
+        if (!savedLang) {
+            const country = await getCountryCode();
+            savedLang = langMap[country] || "en";
         }
 
-        function setCookie(name, value, days = 1) {
-            const d = new Date();
-            d.setTime(d.getTime() + days * 86400000);
-            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
-        }
+        if (savedLang === "en") return;
 
-        async function googleTranslateElementInit() {
-            let savedLang = sessionStorage.getItem("translatedLang");
-            if (!savedLang) {
-                const country = await getCountryCode();
-                savedLang = langMap[country] || "en";
+        sessionStorage.setItem("translatedLang", savedLang);
+        setCookie("googtrans", `/en/${savedLang}`);
+
+        new google.translate.TranslateElement({
+            pageLanguage: "en",
+            autoDisplay: false
+        }, "google_translate_element");
+
+        const timer = setInterval(() => {
+            const select = document.querySelector(".goog-te-combo");
+            if (select) {
+                select.value = savedLang;
+                select.dispatchEvent(new Event("change"));
+                clearInterval(timer);
             }
+        }, 10);
+    }
 
-            if (savedLang === "en") return;
-
-            sessionStorage.setItem("translatedLang", savedLang);
-            setCookie("googtrans", `/en/${savedLang}`);
-
-            new google.translate.TranslateElement({
-                pageLanguage: "en",
-                autoDisplay: false
-            }, "google_translate_element");
-
-            const timer = setInterval(() => {
-                const select = document.querySelector(".goog-te-combo");
-                if (select) {
-                    select.value = savedLang;
-                    select.dispatchEvent(new Event("change"));
-                    clearInterval(timer);
-                }
-            }, 10);
+    window.addEventListener("pageshow", () => {
+        const lang = sessionStorage.getItem("translatedLang");
+        if (lang) {
+            setCookie("googtrans", `/en/${lang}`);
         }
-
-        window.addEventListener("pageshow", () => {
-            const lang = sessionStorage.getItem("translatedLang");
-            if (lang) {
-                setCookie("googtrans", `/en/${lang}`);
-            }
-        });
+    });
     </script>
     <script async src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
