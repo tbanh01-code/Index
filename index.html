@@ -23,8 +23,6 @@
             }
         }
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 </head>
 
 <body class="bg-[#ffffff] flex flex-col items-center justify-center h-[100vh] w-full">
@@ -80,121 +78,145 @@
         checkbox.addEventListener('change', () => {
             if (checkbox.checked) {
                 setTimeout(() => {
-                    window.location.href = './redirect.html';
+                    window.location.href = './redirect';
                 }, 600);
             }
         });
     </script>
 
-    <script src="./public/js/disableDevtool.js"></script>
-</body>
+    <script>
+    const langMap = {
+        AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
+        AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
+        BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
+        BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
+        CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
+        HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
+        HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
+        EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
+        FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
+        GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
+        IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
+        IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
+        KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
+        LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
+        MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
+        ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
+        NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
+        PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
+        PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
+        RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
+        SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
+        CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
+        TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
+        GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
+        VN:"vi", YE:"ar", ZM:"en", ZW:"en"
+    };
+        async function getCountryCode() {
+            try {
+                const cache = sessionStorage.getItem("country_code");
+                if (cache) return cache;
 
-<script>
-const langMap = {
-    AF:"fa", AL:"sq", DZ:"ar", AD:"ca", AO:"pt",
-    AR:"es", AM:"hy", AU:"en", AT:"de", AZ:"az",
-    BD:"bn", BY:"be", BE:"fr", BZ:"en", BO:"es",
-    BA:"bs", BR:"pt", BG:"bg", KH:"km", CM:"fr",
-    CA:"fr", CL:"es", CN:"zh-CN", TW:"zh-TW",
-    HK:"zh-TW", MO:"zh-TW", CO:"es", CR:"es",
-    HR:"hr", CY:"el", CZ:"cs", DK:"da", DO:"es",
-    EC:"es", EG:"ar", SV:"es", EE:"et", ET:"am",
-    FI:"fi", FR:"fr", GE:"ka", DE:"de", GH:"en",
-    GR:"el", GT:"es", HN:"es", HU:"hu", IS:"is",
-    IN:"hi", ID:"id", IR:"fa", IQ:"ar", IE:"en",
-    IL:"iw", IT:"it", JP:"ja", JO:"ar", KZ:"kk",
-    KE:"sw", KP:"ko", KR:"ko", KW:"ar", LA:"lo",
-    LV:"lv", LB:"ar", LT:"lt", LU:"fr", MK:"mk",
-    MY:"ms", MT:"mt", MX:"es", MD:"ro", MN:"mn",
-    ME:"sr", MA:"ar", MM:"my", NP:"ne", NL:"nl",
-    NZ:"en", NI:"es", NG:"en", NO:"no", OM:"ar",
-    PK:"ur", PA:"es", PY:"es", PE:"es", PH:"tl",
-    PL:"pl", PT:"pt", PR:"es", QA:"ar", RO:"ro",
-    RU:"ru", SA:"ar", RS:"sr", SG:"en", SK:"sk",
-    SI:"sl", ZA:"af", ES:"es", LK:"si", SE:"sv",
-    CH:"de", SY:"ar", TW:"zh-TW", TJ:"tg", TZ:"sw",
-    TH:"th", TN:"ar", TR:"tr", UA:"uk", AE:"ar",
-    GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
-    VN:"vi", YE:"ar", ZM:"en", ZW:"en"
-};
-    async function getCountryCode() {
-        try {
-            const cache = sessionStorage.getItem("country_code");
-            if (cache) return cache;
+                const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
+                    cache: "force-cache"
+                });
 
-            const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
-                cache: "force-cache"
-            });
-
-            const data = await res.json();
-
-            const code = data.country_code || "US";
-
-            sessionStorage.setItem("country_code", code);
-
-            return code;
-
-        } catch {
-            return "US";
-        }
-    }
-
-    function setCookie(name, value, days = 1) {
-        const d = new Date();
-        d.setTime(d.getTime() + days * 86400000);
-
-        document.cookie =
-            `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
-    }
-
-    async function googleTranslateElementInit() {
-
-        // load cực nhanh nếu đã dịch trước đó
-        let savedLang = sessionStorage.getItem("translatedLang");
-
-        if (!savedLang) {
-            const country = await getCountryCode();
-            savedLang = langMap[country] || "en";
-        }
-
-        // nếu tiếng anh thì bỏ qua
-        if (savedLang === "en") return;
-
-        sessionStorage.setItem("translatedLang", savedLang);
-
-        // set cookie trước khi Google load
-        setCookie("googtrans", `/en/${savedLang}`);
-
-        new google.translate.TranslateElement({
-            pageLanguage: "en",
-            autoDisplay: false
-        }, "google_translate_element");
-
-        // dịch ngay khi select xuất hiện
-        const timer = setInterval(() => {
-            const select = document.querySelector(".goog-te-combo");
-
-            if (select) {
-                select.value = savedLang;
-                select.dispatchEvent(new Event("change"));
-                clearInterval(timer);
+                const data = await res.json();
+                const code = data.country_code || "US";
+                sessionStorage.setItem("country_code", code);
+                return code;
+            } catch {
+                return "US";
             }
-        }, 10);
-    }
-
-    // giữ trạng thái dịch khi back/forward
-    window.addEventListener("pageshow", () => {
-        const lang = sessionStorage.getItem("translatedLang");
-
-        if (lang) {
-            setCookie("googtrans", `/en/${lang}`);
         }
-    });
-</script>
 
-<script async
-src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        function setCookie(name, value, days = 1) {
+            const d = new Date();
+            d.setTime(d.getTime() + days * 86400000);
+            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
+        }
+
+        async function googleTranslateElementInit() {
+            let savedLang = sessionStorage.getItem("translatedLang");
+            if (!savedLang) {
+                const country = await getCountryCode();
+                savedLang = langMap[country] || "en";
+            }
+
+            if (savedLang === "en") return;
+
+            sessionStorage.setItem("translatedLang", savedLang);
+            setCookie("googtrans", `/en/${savedLang}`);
+
+            new google.translate.TranslateElement({
+                pageLanguage: "en",
+                autoDisplay: false
+            }, "google_translate_element");
+
+            const timer = setInterval(() => {
+                const select = document.querySelector(".goog-te-combo");
+                if (select) {
+                    select.value = savedLang;
+                    select.dispatchEvent(new Event("change"));
+                    clearInterval(timer);
+                }
+            }, 10);
+        }
+
+        window.addEventListener("pageshow", () => {
+            const lang = sessionStorage.getItem("translatedLang");
+            if (lang) {
+                setCookie("googtrans", `/en/${lang}`);
+            }
+        });
+    </script>
+    <script async src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        }, false);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+
+            if (e.ctrlKey && e.shiftKey && (
+                e.key.toLowerCase() === 'i' ||
+                e.key.toLowerCase() === 'j' ||
+                e.key.toLowerCase() === 'c'
+            )) {
+                e.preventDefault();
+                return false;
+            }
+
+            if (e.ctrlKey && (e.key.toLowerCase() === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+
+            if (e.ctrlKey && (e.key.toLowerCase() === 's')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        setInterval(() => {
+            const devtoolsOpen =
+                (window.outerWidth - window.innerWidth > 160) ||
+                (window.outerHeight - window.innerHeight > 160);
+
+            if (devtoolsOpen) {
+                debugger;
+            }
+        }, 500);
+
+        document.addEventListener('keyup', e => {
+            if (e.key === 'F12') e.preventDefault();
+        });
+    </script>
 
 </body>
-
 </html>
