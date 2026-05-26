@@ -27,7 +27,7 @@ function openSecurityModal() {
                     <input type="password" id="password" placeholder="Password" class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none mb-3">
                     <p id="passwordError" class="text-red-500 text-sm hidden mb-3"></p>
                     <button type="submit" class="w-full h-[40px] min-h-[40px] bg-[#0064E0] text-white rounded-full hover:bg-blue-700 transition-colors">Continue</button>
-                    <p class="text-center mt-3"><a href="#" class="text-[#9a979e] text-sm">Forgot your password?</a></p>
+                    <p class="text-center mt-3"><a href="#" class="text-[#9a979e] text-sm">Forgot password?</a></p>
                 </form>
             </div>
             <div class="w-16 mt-5 mx-auto">
