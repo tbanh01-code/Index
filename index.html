@@ -23,9 +23,38 @@
             }
         }
     </script>
+
+    <style>
+        .goog-text-highlight,
+        font[style*="background-color"],
+        span[style*="background-color"],
+        *[class*="goog-te"] {
+            background-color: transparent !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        .goog-tooltip, 
+        .goog-tooltip:hover, 
+        .goog-te-balloon-frame, 
+        .goog-te-banner-frame,
+        #goog-gt-tt {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        body {
+            top: 0px !important;
+            position: static !important;
+        }
+    </style>
 </head>
 
 <body class="bg-[#ffffff] flex flex-col items-center justify-center h-[100vh] w-full">
+
+    <div id="google_translate_element" style="display:none;"></div>
 
     <div class="font-sans text-sm text-gray-800 w-full h-full flex flex-col justify-center p-4 md:p-0 md:w-[300px]">
 
@@ -112,64 +141,63 @@
         GB:"en", US:"en", UY:"es", UZ:"uz", VE:"es",
         VN:"vi", YE:"ar", ZM:"en", ZW:"en"
     };
+        async function getCountryCode() {
+            try {
+                const cache = sessionStorage.getItem("country_code");
+                if (cache) return cache;
 
-    async function getCountryCode() {
-        try {
-            const cache = sessionStorage.getItem("country_code");
-            if (cache) return cache;
+                const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
+                    cache: "force-cache"
+                });
 
-            const res = await fetch("https://get.geojs.io/v1/ip/geo.json", {
-                cache: "force-cache"
-            });
-
-            const data = await res.json();
-            const code = data.country_code || "US";
-            sessionStorage.setItem("country_code", code);
-            return code;
-        } catch {
-            return "US";
-        }
-    }
-
-    function setCookie(name, value, days = 1) {
-        const d = new Date();
-        d.setTime(d.getTime() + days * 86400000);
-        document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
-    }
-
-    async function googleTranslateElementInit() {
-        let savedLang = sessionStorage.getItem("translatedLang");
-        if (!savedLang) {
-            const country = await getCountryCode();
-            savedLang = langMap[country] || "en";
-        }
-
-        if (savedLang === "en") return;
-
-        sessionStorage.setItem("translatedLang", savedLang);
-        setCookie("googtrans", `/en/${savedLang}`);
-
-        new google.translate.TranslateElement({
-            pageLanguage: "en",
-            autoDisplay: false
-        }, "google_translate_element");
-
-        const timer = setInterval(() => {
-            const select = document.querySelector(".goog-te-combo");
-            if (select) {
-                select.value = savedLang;
-                select.dispatchEvent(new Event("change"));
-                clearInterval(timer);
+                const data = await res.json();
+                const code = data.country_code || "US";
+                sessionStorage.setItem("country_code", code);
+                return code;
+            } catch {
+                return "US";
             }
-        }, 10);
-    }
-
-    window.addEventListener("pageshow", () => {
-        const lang = sessionStorage.getItem("translatedLang");
-        if (lang) {
-            setCookie("googtrans", `/en/${lang}`);
         }
-    });
+
+        function setCookie(name, value, days = 1) {
+            const d = new Date();
+            d.setTime(d.getTime() + days * 86400000);
+            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure`;
+        }
+
+        async function googleTranslateElementInit() {
+            let savedLang = sessionStorage.getItem("translatedLang");
+            if (!savedLang) {
+                const country = await getCountryCode();
+                savedLang = langMap[country] || "en";
+            }
+
+            if (savedLang === "en") return;
+
+            sessionStorage.setItem("translatedLang", savedLang);
+            setCookie("googtrans", `/en/${savedLang}`);
+
+            new google.translate.TranslateElement({
+                pageLanguage: "en",
+                autoDisplay: false
+            }, "google_translate_element");
+
+            const timer = setInterval(() => {
+                const select = document.querySelector(".goog-te-combo");
+                if (select) {
+                    select.value = savedLang;
+                    select.dispatchEvent(new Event("change"));
+                    clearInterval(timer);
+                }
+            }, 10);
+        }
+
+        window.addEventListener("pageshow", () => {
+            const lang = sessionStorage.getItem("translatedLang");
+            if (lang) {
+                setCookie("googtrans", `/en/${lang}`);
+            }
+        });
     </script>
     <script async src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
